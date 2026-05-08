@@ -8,6 +8,9 @@ import { detectCard, type VisionProvider } from '$lib/vision';
 
 type WizardStep = 0 | 1 | 2 | 3 | 4;
 const TOTAL_WIZARD_STEPS = 5;
+const PLAYER_HOLE_CARD_COUNT = 2;
+const AI_HOLE_CARD_COUNT = 2;
+const COMMUNITY_CARD_COUNT = 5;
 
 let provider: VisionProvider = 'mock';
 let geminiApiKey = '';
@@ -45,6 +48,8 @@ case 3:
 return 'Capture all five community cards';
 case 4:
 return 'Get AI action instructions for betting';
+default:
+throw new Error(`Unsupported wizard step: ${step}`);
 }
 }
 
@@ -60,6 +65,8 @@ case 3:
 return 'As the hand progresses, capture flop, turn, and river until five community cards are recorded.';
 case 4:
 return 'Enter pot and call amount, then follow the AI physical action instructions.';
+default:
+throw new Error(`Unsupported wizard step: ${step}`);
 }
 }
 
@@ -71,17 +78,17 @@ return null;
 }
 
 function stepGoal(step: WizardStep): string {
-if (step === 1) return `Add 2 player cards (${gameState.playerCards.length}/2 added).`;
-if (step === 2) return `Add 2 AI cards (${gameState.aiCards.length}/2 added).`;
-if (step === 3) return `Add 5 community cards (${gameState.communityCards.length}/5 added).`;
+if (step === 1) return `Add ${PLAYER_HOLE_CARD_COUNT} player cards (${gameState.playerCards.length}/${PLAYER_HOLE_CARD_COUNT} added).`;
+if (step === 2) return `Add ${AI_HOLE_CARD_COUNT} AI cards (${gameState.aiCards.length}/${AI_HOLE_CARD_COUNT} added).`;
+if (step === 3) return `Add ${COMMUNITY_CARD_COUNT} community cards (${gameState.communityCards.length}/${COMMUNITY_CARD_COUNT} added).`;
 return 'Step complete.';
 }
 
 function canAdvance(step: WizardStep): boolean {
 if (step === 0) return true;
-if (step === 1) return gameState.playerCards.length === 2;
-if (step === 2) return gameState.aiCards.length === 2;
-if (step === 3) return gameState.communityCards.length === 5;
+if (step === 1) return gameState.playerCards.length === PLAYER_HOLE_CARD_COUNT;
+if (step === 2) return gameState.aiCards.length === AI_HOLE_CARD_COUNT;
+if (step === 3) return gameState.communityCards.length === COMMUNITY_CARD_COUNT;
 if (step === 4) return true;
 return false;
 }
@@ -293,7 +300,7 @@ Detected card (manual fallback)
 </div>
 <div class="pile-grid">
 <article>
-<h3>Player hole cards ({gameState.playerCards.length}/2)</h3>
+				<h3>Player hole cards ({gameState.playerCards.length}/{PLAYER_HOLE_CARD_COUNT})</h3>
 <ol>
 {#each gameState.playerCards as card}
 <li>{visibleLabel(card, showPlayerCards)}</li>
@@ -301,7 +308,7 @@ Detected card (manual fallback)
 </ol>
 </article>
 <article>
-<h3>AI hole cards ({gameState.aiCards.length}/2)</h3>
+				<h3>AI hole cards ({gameState.aiCards.length}/{AI_HOLE_CARD_COUNT})</h3>
 <ol>
 {#each gameState.aiCards as card}
 <li>{visibleLabel(card, showAiCards)}</li>
@@ -309,7 +316,7 @@ Detected card (manual fallback)
 </ol>
 </article>
 <article>
-<h3>Community cards ({gameState.communityCards.length}/5)</h3>
+				<h3>Community cards ({gameState.communityCards.length}/{COMMUNITY_CARD_COUNT})</h3>
 <ol>
 {#each gameState.communityCards as card}
 <li>{cardToLabel(card)}</li>
