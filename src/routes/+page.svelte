@@ -15,7 +15,6 @@ const COMMUNITY_CARD_COUNT = 5;
 let provider: VisionProvider = 'mock';
 let geminiApiKey = '';
 let manualCardInput = '';
-let selectedTarget: CardTarget = 'player';
 let status = 'Use the wizard below and complete each step in order.';
 let currentStep: WizardStep = 0;
 
@@ -58,7 +57,7 @@ switch (step) {
 case 0:
 return 'Select a vision provider, start the camera, and capture a clear frame of the table area.';
 case 1:
-return 'Show each of your two hole cards to the camera one at a time, then click Detect + assign card.';
+return 'Show each of your two hole cards to the camera one at a time, then click "Detect + assign card".';
 case 2:
 return 'Keep AI cards face-down for normal play, briefly show each one to the camera, then assign it to the AI context.';
 case 3:
@@ -95,8 +94,6 @@ return false;
 
 function goToStep(step: WizardStep) {
 currentStep = step;
-const targetForCurrentStep = stepTarget(step);
-if (targetForCurrentStep) selectedTarget = targetForCurrentStep;
 status = `Step ${step + 1}/${TOTAL_WIZARD_STEPS}: ${stepInstruction(step)}`;
 }
 
@@ -170,7 +167,6 @@ return;
 
 gameState = update.state;
 manualCardInput = '';
-selectedTarget = target;
 status = `${cardToLabel(card)} was assigned to ${target}. ${stepGoal(currentStep)}`;
 }
 
