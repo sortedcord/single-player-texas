@@ -2,6 +2,14 @@ import type { Card, Rank, Suit } from './game';
 
 export type VisionProvider = 'mock' | 'gemini';
 
+export type GeminiConnectionCheck = {
+ok: true;
+message: string;
+} | {
+ok: false;
+message: string;
+};
+
 const RANK_ALIASES: Record<string, Rank> = {
 a: 'A',
 ace: 'A',
@@ -88,10 +96,10 @@ const base64 = imageDataUrl.split(',')[1];
 if (!base64) return null;
 
 const response = await fetch(
-`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
+'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
 {
 method: 'POST',
-headers: { 'Content-Type': 'application/json' },
+headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
 body: JSON.stringify({
 contents: [
 {
@@ -126,6 +134,37 @@ if (card) return card;
 }
 
 return parseCardText(rawText);
+}
+
+export async function checkGeminiConnection(apiKey: string): Promise<GeminiConnectionCheck> {
+if (!apiKey.trim()) {
+return { ok: false, message: 'Enter a Gemini API key before continuing.' };
+}
+
+try {
+const response = await fetch(
+'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',
+{
+method: 'POST',
+headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
+body: JSON.stringify({
+contents: [
+{
+parts: [{ text: 'Reply with the single word OK.' }]
+}
+]
+})
+}
+);
+
+if (!response.ok) {
+return { ok: false, message: 'Gemini connection failed. Check the API key and network access, then try again.' };
+}
+
+return { ok: true, message: 'Gemini connection established.' };
+} catch {
+return { ok: false, message: 'Gemini connection could not be established. Check the API key and network access, then try again.' };
+}
 }
 
 export async function detectCard(options: {
