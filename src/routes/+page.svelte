@@ -43,7 +43,7 @@ case 2:
 return "Capture the AI's two hidden cards";
 case 3:
 return 'Capture all five community cards';
-default:
+case 4:
 return 'Get AI action instructions for betting';
 }
 }
@@ -58,7 +58,7 @@ case 2:
 return 'Without revealing to the player, show each AI hole card and assign it to the AI context.';
 case 3:
 return 'As the hand progresses, capture flop, turn, and river until five community cards are recorded.';
-default:
+case 4:
 return 'Enter pot and call amount, then follow the AI physical action instructions.';
 }
 }
@@ -82,7 +82,8 @@ if (step === 0) return true;
 if (step === 1) return gameState.playerCards.length === 2;
 if (step === 2) return gameState.aiCards.length === 2;
 if (step === 3) return gameState.communityCards.length === 5;
-return true;
+if (step === 4) return true;
+return false;
 }
 
 function goToStep(step: WizardStep) {
