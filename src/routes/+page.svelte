@@ -93,7 +93,7 @@ status = `Step ${step + 1}/${TOTAL_WIZARD_STEPS}: ${stepInstruction(step)}`;
 }
 
 function goToNextStep() {
-if (currentStep < 4 && canAdvance(currentStep)) {
+if (currentStep < TOTAL_WIZARD_STEPS - 1 && canAdvance(currentStep)) {
 goToStep((currentStep + 1) as WizardStep);
 }
 }
@@ -203,12 +203,16 @@ content="Play physical-card Texas Hold'em with camera capture and optional Gemin
 <p>{stepInstruction(currentStep)}</p>
 <div class="row camera-actions">
 <button type="button" on:click={goToPreviousStep} disabled={currentStep === 0}>Previous step</button>
-<button type="button" on:click={goToNextStep} disabled={currentStep === 4 || !canAdvance(currentStep)}>
+<button
+type="button"
+on:click={goToNextStep}
+disabled={currentStep === TOTAL_WIZARD_STEPS - 1 || !canAdvance(currentStep)}
+>
 Complete step and continue
 </button>
 <button type="button" on:click={resetHand}>Reset hand</button>
 </div>
-{#if currentStep < 4 && !canAdvance(currentStep)}
+{#if currentStep < TOTAL_WIZARD_STEPS - 1 && !canAdvance(currentStep)}
 <p class="hint">Before continuing: {stepGoal(currentStep)}</p>
 {/if}
 </section>
@@ -234,7 +238,7 @@ Gemini API key (used only in your browser)
 </section>
 {/if}
 
-{#if currentStep === 0 || currentStep === 1 || currentStep === 2 || currentStep === 3}
+{#if currentStep < TOTAL_WIZARD_STEPS - 1}
 <section>
 <h2>Camera capture</h2>
 <div class="row camera-actions">
@@ -257,7 +261,7 @@ Gemini API key (used only in your browser)
 </section>
 {/if}
 
-{#if currentStep === 1 || currentStep === 2 || currentStep === 3}
+{#if currentStep >= 1 && currentStep <= 3}
 <section>
 <h2>Card assignment for current step</h2>
 <p>
