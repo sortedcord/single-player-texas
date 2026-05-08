@@ -7,6 +7,7 @@ import { addCardToState, cardToLabel, getAiTurnPlan, getGameStage } from '$lib/g
 import { detectCard, type VisionProvider } from '$lib/vision';
 
 type WizardStep = 0 | 1 | 2 | 3 | 4;
+const TOTAL_WIZARD_STEPS = 5;
 
 let provider: VisionProvider = 'mock';
 let geminiApiKey = '';
@@ -86,9 +87,9 @@ return true;
 
 function goToStep(step: WizardStep) {
 currentStep = step;
-const forcedTarget = stepTarget(step);
-if (forcedTarget) selectedTarget = forcedTarget;
-status = `Step ${step + 1}/5: ${stepInstruction(step)}`;
+const targetForCurrentStep = stepTarget(step);
+if (targetForCurrentStep) selectedTarget = targetForCurrentStep;
+status = `Step ${step + 1}/${TOTAL_WIZARD_STEPS}: ${stepInstruction(step)}`;
 }
 
 function goToNextStep() {
@@ -135,8 +136,8 @@ status = 'Frame captured. Detect and assign the card for the current step.';
 }
 
 async function detectAndAssignCard() {
-const forcedTarget = stepTarget(currentStep);
-const target = forcedTarget ?? selectedTarget;
+const targetForCurrentStep = stepTarget(currentStep);
+const target = targetForCurrentStep ?? selectedTarget;
 const card = await detectCard({
 provider,
 manualInput: manualCardInput,
@@ -196,9 +197,9 @@ content="Play physical-card Texas Hold'em with camera capture and optional Gemin
 <h1>Single Player Texas Hold'em Assistant</h1>
 <p>Follow the step-by-step wizard to run a full hand with physical cards.</p>
 
-<section>
-<h2>Wizard</h2>
-<p><strong>Step {currentStep + 1}/5:</strong> {stepTitle(currentStep)}</p>
+	<section>
+		<h2>Wizard</h2>
+		<p><strong>Step {currentStep + 1}/{TOTAL_WIZARD_STEPS}:</strong> {stepTitle(currentStep)}</p>
 <p>{stepInstruction(currentStep)}</p>
 <div class="row camera-actions">
 <button type="button" on:click={goToPreviousStep} disabled={currentStep === 0}>Previous step</button>
