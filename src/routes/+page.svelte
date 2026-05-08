@@ -55,7 +55,7 @@ return 'Select a vision provider, start the camera, and capture a clear frame of
 case 1:
 return 'Show each of your two hole cards to the camera one at a time, then click Detect + assign card.';
 case 2:
-return 'Without revealing to the player, show each AI hole card and assign it to the AI context.';
+return 'Keep AI cards face-down for normal play, briefly show each one to the camera, then assign it to the AI context.';
 case 3:
 return 'As the hand progresses, capture flop, turn, and river until five community cards are recorded.';
 case 4:
@@ -138,7 +138,11 @@ status = 'Frame captured. Detect and assign the card for the current step.';
 
 async function detectAndAssignCard() {
 const targetForCurrentStep = stepTarget(currentStep);
-const target = targetForCurrentStep ?? selectedTarget;
+if (!targetForCurrentStep) {
+status = 'Card assignment is only available during player/AI/community capture steps.';
+return;
+}
+const target = targetForCurrentStep;
 const card = await detectCard({
 provider,
 manualInput: manualCardInput,
@@ -213,7 +217,7 @@ Complete step and continue
 </button>
 <button type="button" on:click={resetHand}>Reset hand</button>
 </div>
-{#if currentStep < TOTAL_WIZARD_STEPS - 1 && !canAdvance(currentStep)}
+{#if !canAdvance(currentStep)}
 <p class="hint">Before continuing: {stepGoal(currentStep)}</p>
 {/if}
 </section>
