@@ -33,17 +33,17 @@ let stream: MediaStream | null = null;
 let cameraError = '';
 
 function stepTitle(step: WizardStep): string {
-switch (step) {
-case 0:
-return 'Choose vision setup and camera framing';
-case 1:
-return 'Capture your two hidden player cards';
-case 2:
-return 'Capture the AI two hidden cards';
-case 3:
-return 'Capture all five community cards';
-default:
-return 'Get AI action instructions for betting';
+		switch (step) {
+			case 0:
+				return 'Choose vision setup and camera framing';
+			case 1:
+				return 'Capture your two hidden player cards';
+			case 2:
+				return "Capture the AI's two hidden cards";
+			case 3:
+				return 'Capture all five community cards';
+			default:
+				return 'Get AI action instructions for betting';
 }
 }
 
@@ -161,13 +161,13 @@ selectedTarget = target;
 status = `${cardToLabel(card)} was assigned to ${target}. ${stepGoal(currentStep)}`;
 }
 
-function resetHand() {
-gameState = { playerCards: [], aiCards: [], communityCards: [] };
-pot = 0;
-toCall = 0;
-goToStep(0);
-status = 'New hand started. Follow the wizard from step 1.';
-}
+	function resetHand() {
+		gameState = { playerCards: [], aiCards: [], communityCards: [] };
+		pot = 0;
+		toCall = 0;
+		goToStep(0);
+		status = 'New hand started. Follow the wizard from the beginning.';
+	}
 
 function visibleLabel(card: Card, reveal: boolean) {
 return reveal ? cardToLabel(card) : 'Hidden card';
